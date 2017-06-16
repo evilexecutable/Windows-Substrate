@@ -49,7 +49,7 @@ class Hack(object):
         process_name = 'Notepad'
         i = Hack(process_name).
         # If no process is supplied, then you do:
-        i = Hack().findProcess()
+        i = Hack().find_process()
         print i.running
         # to get a list the currently running processes.
 
@@ -77,7 +77,12 @@ class Hack(object):
         )
 
     def add_hook(self, module_name, function_name, function_handle):
-        """Add hook to an external DLL function."""
+        """
+        Add hook to an external DLL function.
+        :param module_name: (string) module name (i.e: 'ws2_32.dll')
+        :param function_name: (string) function name (i.e: 'send')
+        :param function_handle: (string) function event callback (i.e.: 'mycallback')
+        """
         key = self.hook_dict.get(module_name)
         if key is not None:
             key.append((function_name, function_handle))
@@ -85,7 +90,12 @@ class Hack(object):
             self.hook_dict[module_name] = [(function_name, function_handle)]
 
     def add_internal_hook(self, address, function_handle, signature=()):
-        """Add hook to an internal function."""
+        """
+        Add hook to an internal function.
+        :param address: (int/hex) Memory address of internal functin.
+        :param function_handle: callback function.
+        :param signature: byte-code signature used to find function.
+        """
         self.hook_dict[address] = [(function_handle, signature)]
             
     def hook(self):
