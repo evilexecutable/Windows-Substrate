@@ -13,8 +13,6 @@ Guide
 .. toctree::
    :maxdepth: 2
    
-   installation
-   examples
    overview
    
 
