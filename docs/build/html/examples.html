@@ -1,0 +1,255 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>hackManager &#8212; hackManager 2.5.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.5.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Overview" href="overview.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hackmanager">
+<span id="hackmanager"></span><h1>hackManager<a class="headerlink" href="#hackmanager" title="Permalink to this headline">¶</a></h1>
+<p>Windows process memory hacking framework created in Python and winappdbg.</p>
+<blockquote>
+<div>So i noticed a couple of people were creating projects using this library I made a couple years ago so I thought I'd continue supporting it from now onwards.</div></blockquote>
+</div>
+<div class="section" id="installation">
+<span id="installation"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">hackManager</span></code></p>
+</div>
+<div class="section" id="examples">
+<span id="examples"></span><h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p><strong>To create a simple Python file to renames Notepad.exe into something else, you could achieve that via:</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span>
+
+<span class="n">Hack</span><span class="o">.</span><span class="n">change_window_title</span><span class="p">(</span><span class="s">&quot;Notepad.exe&quot;</span><span class="p">,</span> <span class="s">&quot;Changed Notepad.exe&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>To create a hack for a game, you should be able to do something similar to:</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span>
+
+<span class="n">FAKE_HEALTH_ADDRESS</span> <span class="o">=</span> <span class="mh">0x01123123</span> <span class="c"># memory address found using Cheat Engine or your preferred Debugger (Olly, Immunity).</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">Hack</span><span class="p">(</span><span class="s">&quot;Game.exe&quot;</span><span class="p">)</span>
+<span class="n">h</span><span class="o">.</span><span class="n">write_int</span><span class="p">(</span><span class="n">FAKE_HEALTH_ADDRESS</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Internal (main process) function hooking</strong></p>
+<blockquote>
+<div>You can hook onto the processes internal functions following this method.
+add_internal_hook takes three parameters, the third being optional: function_memory_address, function_handle, signatures.
+The signatures parameter allows you to parse values related to this function directly from the stack.</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span>
+ 
+ 
+<span class="k">def</span> <span class="nf">function_handle</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">print</span> <span class="s">&quot;Function hit!&quot;</span>
+ 
+    
+<span class="n">h</span> <span class="o">=</span> <span class="n">Hack</span><span class="p">(</span><span class="s">&quot;mb_warband.exe&quot;</span><span class="p">)</span>
+<span class="n">h</span><span class="o">.</span><span class="n">add_internal_hook</span><span class="p">(</span><span class="mh">0x004961FC</span><span class="p">,</span> <span class="n">function_handle</span><span class="p">)</span>
+<span class="n">h</span><span class="o">.</span><span class="n">hook</span><span class="p">()</span>
+<span class="n">h</span><span class="o">.</span><span class="n">safe_exit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>External library (DLL) hooking</strong></p>
+<blockquote>
+<div>You can hook onto Kernel and DLL functions within' a process. In this example, we hook onto RUST's(game) Dedicated Server and hook onto its WinSock SendTo DLL function calls. This allows us to sniff(analyze) process-specific traffic. This requires a little research on your part though. For example, you need to know what parameters the DLL functions require. You can easily pull this up on Google Search by typing something like, i.e: &quot;WinSock sendto msdn&quot;. The Microsoft Developer Network is fulled with tons of documentation for its DLLs like Winsock. You can add as many hooks as you want, for the same DLL or different ones. Simply call the class-method add_hook(DLL_Name, DLL_Function, function_handler).</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span>
+ 
+<span class="k">def</span> <span class="nf">sendto</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">tolength</span><span class="p">):</span>     
+    <span class="n">data</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_process</span><span class="p">()</span><span class="o">.</span><span class="n">peek</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s">&quot;Send: &quot;</span> <span class="o">+</span> <span class="n">data</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span> 
+ 
+<span class="n">h</span> <span class="o">=</span> <span class="n">Hack</span><span class="p">(</span><span class="s">&quot;rust_server.exe&quot;</span><span class="p">)</span> 
+<span class="n">h</span><span class="o">.</span><span class="n">add_hook</span><span class="p">(</span><span class="s">&quot;ws2_32.dll&quot;</span><span class="p">,</span> <span class="s">&quot;sendto&quot;</span><span class="p">,</span> <span class="n">sendto</span><span class="p">)</span> 
+<span class="n">h</span><span class="o">.</span><span class="n">hook</span><span class="p">()</span> 
+<span class="n">h</span><span class="o">.</span><span class="n">safe_exit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Call of Duty: Black Ops 2 - No recoil hack</strong></p>
+<blockquote>
+<div>Singleplayer &amp; Multiplayer hack that removes every weapons recoil effect.</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span>  <span class="c"># Absolute memory address </span>
+ 
+ 
+<span class="n">BLACKOPS_RECOIL_ADDRESS</span> <span class="o">=</span> <span class="mh">0x004AF328</span> <span class="c"># You can also supply the base address and a offset like, i.e.:</span>
+<span class="c"># BLACKOPS_RECOIL_ADDRESS = instance.base_address + 0xAF328  </span>
+ 
+<span class="c"># No recoil value </span>
+<span class="n">BLACKOPS_NO_RECOIL_VALUE</span> <span class="o">=</span> <span class="mi">117</span> 
+<span class="n">target</span> <span class="o">=</span> <span class="s">&quot;t6mp.exe&quot;</span> 
+ 
+<span class="n">instance</span> <span class="o">=</span> <span class="n">Hack</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> 
+<span class="nb">print</span> <span class="n">instance</span><span class="o">.</span><span class="n">base_address</span> <span class="c"># main modules base address (0x400000) </span>
+ 
+<span class="nb">print</span> <span class="n">instance</span><span class="o">.</span><span class="n">read_char</span><span class="p">(</span><span class="n">BLACKOPS_RECOIL_ADDRESS</span><span class="p">)</span> <span class="c"># returns the following:  ( value, label ) </span>
+<span class="c"># label is: t6mp.exe(base address) + offset print </span>
+<span class="c"># instance.read_char(BLACKOPS_RECOIL_ADDRESS) </span>
+ 
+<span class="c"># update value with 117(NO RECOIL VALUE) </span>
+<span class="n">instance</span><span class="o">.</span><span class="n">write_char</span><span class="p">(</span><span class="n">BLACKOPS_RECOIL_ADDRESS</span><span class="p">,</span> <span class="n">BLACKOPS_NO_RECOIL_VALUE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Accessing and modifying data structures within' an application (or game)</strong></p>
+<blockquote>
+<div>In this example we are hooking on the game's Winsock sendto DLL function and accessing its Structure directly via ctypes. We are also accessing the data directly via peek. Both methods work great, however, if you want to access Structure fields in a clean manner, the ctypes approach is preferred.</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span> 
+<span class="kn">import</span> <span class="nn">ctypes</span> 
+ 
+<span class="c"># Winsock sockaddr structure.</span>
+<span class="k">class</span> <span class="nc">sockaddr</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span> 
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span>         
+        <span class="p">(</span><span class="s">&quot;sa_family&quot;</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_ushort</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&quot;sa_data&quot;</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char</span> <span class="o">*</span> <span class="mi">14</span><span class="p">),</span> 
+    <span class="p">]</span>  
+ 
+ 
+<span class="k">def</span> <span class="nf">sendto</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">tolength</span><span class="p">):</span>     
+    <span class="n">p</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_process</span><span class="p">()</span>     
+    <span class="n">data</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">peek</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    <span class="n">to_struct</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">read_structure</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">sockaddr</span><span class="p">)</span> 
+    <span class="nb">print</span> <span class="s">&quot;BUFFER DATA: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>     
+    <span class="nb">print</span> <span class="s">&quot;ACCESSING SPECIFIC STRUCTURE sa_data field:&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">to_struct</span><span class="o">.</span><span class="n">sa_data</span><span class="p">)</span> 
+    <span class="nb">print</span> <span class="s">&quot;PEEKING WHOLE STRUCTURE DATA:&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">peek</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">tolength</span><span class="p">))</span>
+ 
+ <span class="n">game</span> <span class="o">=</span> <span class="n">Hack</span><span class="p">(</span><span class="s">&quot;game.exe&quot;</span><span class="p">)</span> 
+ <span class="n">h</span><span class="o">.</span><span class="n">add_hook</span><span class="p">(</span><span class="s">&quot;ws2_32.dll&quot;</span><span class="p">,</span> <span class="s">&quot;sendto&quot;</span><span class="p">,</span> <span class="n">sendto</span><span class="p">)</span> 
+ <span class="n">h</span><span class="o">.</span><span class="n">hook</span><span class="p">()</span> 
+ <span class="n">h</span><span class="o">.</span><span class="n">safe_exit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Retrieving and interacting with running threads</strong></p>
+<blockquote>
+<div>You can retrieve the list of the processes running threads with the Hack.get_threads() class-method. You can use this to your advantage to supervise the amount of threads your processes currently has running and to analyze them individually. Remember that hackManager is built on top of winappdbg, thus you are able to execute thread-related class-methods like, i.e: thread_instance.set_name(), thread_instance.is_hidden(), thread_instance.set_process(), thread_instance.kill(), thread_instance.name(), thread_instance.resume(), thread_instance.suspend(), to name a few. When you call Hack.get_threads(), the list of threads are stored on your Hack() instances thread global variable. Thus you can access it with Hack_instance.threads. It's stored as a dictionary. The thread id's being the keys for the dictionary. Check the winappdbg documentation for more information regarding iteraction with threads. Remember: hackManager returns winappdbg.Thread instances.</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span> 
+<span class="n">h</span> <span class="o">=</span> <span class="n">Hack</span><span class="p">(</span><span class="s">&quot;game.exe&quot;</span><span class="p">)</span> 
+<span class="n">h</span><span class="o">.</span><span class="n">get_threads</span><span class="p">()</span> 
+<span class="nb">print</span> <span class="n">h</span><span class="o">.</span><span class="n">threads</span> <span class="c"># returns dictionary, with the keys being the individual threads id&#39;s.</span>
+</pre></div>
+</div>
+<p><strong>Retrieving the list of imported DLLs(libraries).</strong></p>
+<blockquote>
+<div>You can retrieve the list of loaded(imported) DLLs(libraries) within' the process by accessing the module_base_dict global variable. The module_base_dict is a dictionary with the keys being the module names and the values being their base addresses.</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span>  
+<span class="n">h</span> <span class="o">=</span> <span class="n">Hack</span><span class="p">(</span><span class="s">&quot;game.exe&quot;</span><span class="p">)</span> 
+<span class="nb">print</span> <span class="n">h</span><span class="o">.</span><span class="n">module_base_dict</span>
+</pre></div>
+</div>
+<p><strong>Retrieving list of running processes</strong></p>
+<blockquote>
+<div>You can retrieve the list of currently running processes by not supplying a target process name within' your Hack() instance. Then you access the list by calling Hack().running.</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hackManager.hack</span> <span class="k">import</span> <span class="n">Hack</span> 
+<span class="n">h</span> <span class="o">=</span> <span class="n">Hack</span><span class="p">()</span> 
+<span class="nb">print</span> <span class="n">h</span><span class="o">.</span><span class="n">running</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hack-instance-variables-overview">
+<span id="hack-instance-variables-overview"></span><h1>Hack() instance variables overview<a class="headerlink" href="#hack-instance-variables-overview" title="Permalink to this headline">¶</a></h1>
+<p><strong>Hack.module_base_dict</strong></p>
+<blockquote>
+<div>The module_base_dict is a dictionary with the keys being the module names and the values being their base addresses.</div></blockquote>
+<p><strong>Hack.threads</strong></p>
+<blockquote>
+<div>Python dictionary containing lists of running threads on the target process defined in Hack(&quot;PROCESSNAME&quot;). Keys are thread id's, the value being the thread object itself. Refer to the python winappdbg documentation for more information on what type of functionality you can perform on threads.</div></blockquote>
+<p><strong>Hack.base_address</strong></p>
+<blockquote>
+<div>Base address of target process defined in Hack(&quot;PROCESSNAME&quot;).</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">hackManager</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#hack-instance-variables-overview">Hack() instance variables overview</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="overview.html" title="next chapter">Overview</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/examples.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Froweey.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/examples.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
