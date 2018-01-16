@@ -3,14 +3,13 @@ import inspect
 import os
 
 __websites__ = [
-    "https://www.github.com/SirFroweey/",
-    "https://pypi.python.org/pypi/hackManager",
-    "https://www.github.com/SirFroweey/hackManager"
+    "https://www.github.com/evilexecutable/",
+    "https://www.abtekk.xyz"
 ]
 __info__ = "Memory hacking software"
-__author__ = "SirFroweey (a.k.a Froweey)"
-__version__ = "2.5.0"
-__date__ = "06/16/2017"
+__author__ = "Evil.eXe"
+__version__ = "0.0.1"
+__date__ = "16/01/2017"
 
 # This project was created using winappdbg.
 # Check out http://winappdbg.sourceforge.net/doc/v1.4/tutorial/ for more details.

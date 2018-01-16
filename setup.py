@@ -3,25 +3,25 @@ from codecs import open  # To use a consistent encoding
 from os import path
 
 here = path.abspath(path.dirname(__file__))
-long_description = "hackManager is a set of tools created to ease the process of hack and anti-hack development."
+long_description = "Windows Substrate is a platform to easily hook Windows processes and modify them in memory."
 
 setup(
-    name='hackManager',
+    name='Windows-Substrate',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='2.5.0',
+    version='0.0.1',
 
-    description='Process memory hacking(editing) library',
+    description='Process hooking/modifying platform.',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/SirFroweey/hackManager',
+    url='https://github.com/evilexecutable/Windows-Substrate',
 
     # Author details
-    author='Froweey',
-    author_email='lottasay@gmail.com',
+    author='Evil.eXe',
+    author_email='evilexecutable@gmail.com',
 
     # Choose your license
     license='MIT',
@@ -32,7 +32,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 3 - Production/Stable',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
@@ -53,7 +53,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages = ['hackManager'],
+    packages = ['Substrate'],
     include_package_data=True,
 
     # List run-time dependencies here.  These will be installed by pip when your
