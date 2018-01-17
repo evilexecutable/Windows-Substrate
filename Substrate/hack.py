@@ -128,6 +128,30 @@ class Hack(object):
         for thread in process.iter_threads():
             self.threads[str(thread.get_tid())] = thread
 
+    def get_window(self):
+        from winappdbg import HexDump, System, Table
+        import sqlite3
+
+        system = winappdbg.System()
+        process = self.hwnd
+        caption = []
+        badstuff = ['Default IME', None, 'MSCTFIME UI', 'DDE Server Window', 'Click for more details', 'Word', 'HardwareMonitorWindow', 'OfficePowerManagerWindow']
+        print badstuff
+
+        for window in process.get_windows():
+            handle  = HexDump.integer( window.get_handle() )
+            caption.insert(0,window.get_text())
+        
+        print caption
+
+        for x in badstuff:
+            while x in caption:
+                caption.remove(x)
+        print caption
+
+        caption = "".join(caption)
+        return caption
+        
     @classmethod
     def change_window_title(cls, title, new_title):
         """
@@ -164,7 +188,7 @@ class Hack(object):
             if process.get_filename() is not None:
                 name = process.get_filename().split("\\")[-1]
                 if processName is None:
-                    self.running.append((name, process.get_pid()))
+                    name = self.running.append((name, process.get_pid()))
                 else:
                     if name == processName:
                         self.hwnd = process
