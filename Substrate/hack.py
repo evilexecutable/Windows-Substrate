@@ -135,21 +135,18 @@ class Hack(object):
         system = winappdbg.System()
         process = self.hwnd
         caption = []
-        badstuff = ['Default IME', None, 'MSCTFIME UI', 'DDE Server Window', 'Click for more details', 'Word', 'HardwareMonitorWindow', 'OfficePowerManagerWindow']
-        print badstuff
+        removeNull = None
 
         for window in process.get_windows():
             handle  = HexDump.integer( window.get_handle() )
-            caption.insert(0,window.get_text())
+            rootNames = window.get_root()
+            caption.insert(0,rootNames.get_text())
+
+        while removeNull in caption:
+            caption.remove(removeNull)
         
-        print caption
+        caption = caption[0]
 
-        for x in badstuff:
-            while x in caption:
-                caption.remove(x)
-        print caption
-
-        caption = "".join(caption)
         return caption
         
     @classmethod
