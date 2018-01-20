@@ -1,6 +1,7 @@
 import winappdbg
 import inspect
 import os
+from _winreg import *
 
 __websites__ = [
     "https://www.github.com/evilexecutable/",
@@ -146,10 +147,31 @@ class Hack(object):
             caption.remove(removeNull)
         
         caption = caption[0]
-
+        print caption
         return caption
-        
+
     @classmethod
+    #Change user registry keys.
+    def change_reg_key(self, registry, regkey, keytype, keyname, value):
+        
+        import _winreg
+
+        registry = str(registry)
+        getRegistry = ConnectRegistry(None, HKEY_CURRENT_USER)
+        getKey = OpenKey(getRegistry, regkey, 0, KEY_ALL_ACCESS)
+
+        if keytype == "REG_DWORD":
+            getType = _winreg.REG_DWORD
+        elif keytype == "REG_SZ":
+            getType = _winreg.REG_SZ
+        elif keytype == "REG_QWORD":
+            getType = _winreg.REG_QWORD
+        elif ketype == "REG_MULTI_SZ":
+            getType = _winreg.REG_MULTI_SZ
+
+        print getType
+        print SetValueEx(getKey, keyname, 0, getType, value)
+
     def change_window_title(cls, title, new_title):
         """
         Change the specified window's title to the new_title. \
