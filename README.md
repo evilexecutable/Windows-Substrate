@@ -10,6 +10,15 @@ Windows process memory hacking framework created in Python and winappdbg.
 http://hackmanager.readthedocs.io/en/latest/
 
 # Examples
+**To update the windows Registry to change the Windows 10 title bar color:**
+```
+from Substrate.hack import Hack
+
+color = 0xFF0000
+
+Hack.change_reg_key('HKEY_CURRENT_USER', "Software\\Microsoft\\Windows\\DWM", "REG_SZ", "AccentColor", color)
+```
+
 **To create a simple Python file to renames Notepad.exe into something else, you could achieve that via:**
 ```
 from Substrate.hack import Hack
