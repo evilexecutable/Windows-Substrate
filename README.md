@@ -4,7 +4,7 @@ Windows process memory hacking framework created in Python and winappdbg.
 > This was originally a project called hackManager by SirFroweey (https://github.com/SirFroweey/hackManager).
 
 # Installation
-`pip install Windows-Substrate`
+`Not available on pip yet. Drop the "Substrate" folder in C:\Python27\Libs and call it as below.`
 
 # Documentation
 http://hackmanager.readthedocs.io/en/latest/
