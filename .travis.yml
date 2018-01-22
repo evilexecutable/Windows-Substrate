@@ -10,4 +10,4 @@ install:
   - lpython/bin/pip install -e .
 
 script:
-  - lpython/bin/test
+  - lpython/bin/Substrate/test
