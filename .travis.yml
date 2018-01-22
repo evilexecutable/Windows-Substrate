@@ -1,0 +1,13 @@
+language: python
+python:
+  - 2.7
+
+# On a 32-bit Ubuntu Linux 11.10 (server edition):
+install:
+  - sudo apt-get install libboost-thread-dev libboost-system-dev libboost-python-dev libv8-dev python-virtualenv
+  - virtualenv --system-site-packages lpython
+  - lpython/bin/pip install -r requirements.txt
+  - lpython/bin/pip install -e .
+
+script:
+  - lpython/bin/test
