@@ -1,3 +1,5 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/c91f05b39c344bb92211/maintainability)](https://codeclimate.com/github/evilexecutable/Windows-Substrate/maintainability)
+
 # Windows-Substrate
 
 Windows process memory hacking framework created in Python and winappdbg.
