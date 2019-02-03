@@ -2,6 +2,7 @@
 
 # Windows-Substrate
 (Currently being rewritten in C# for maintainability and feature purposes)
+(https://github.com/evilexecutable/Windows-Substrate)
 
 Windows process memory hacking framework created in Python and winappdbg.
 > This was originally a project called hackManager by SirFroweey (https://github.com/SirFroweey/hackManager).
