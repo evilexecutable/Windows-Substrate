@@ -1,6 +1,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/c91f05b39c344bb92211/maintainability)](https://codeclimate.com/github/evilexecutable/Windows-Substrate/maintainability)
 
 # Windows-Substrate
+(Currently being rewritten in C# for maintainability and feature purposes)
 
 Windows process memory hacking framework created in Python and winappdbg.
 > This was originally a project called hackManager by SirFroweey (https://github.com/SirFroweey/hackManager).
